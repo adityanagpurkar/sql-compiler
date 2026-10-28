@@ -1,0 +1,24 @@
+// grammar.lark
+?start: query
+
+query: "SELECT"i column_list "FROM"i source ["WHERE"i condition]
+
+column_list: (CNAME ("," CNAME)*) -> columns
+           | "*"                  -> all_columns
+
+source: CNAME -> single_table
+      | CNAME "JOIN"i CNAME "ON"i CNAME "=" CNAME -> join_tables
+
+condition: CNAME operator value
+
+operator: "=" -> eq
+        | ">" -> gt
+        | "<" -> lt
+
+value: SIGNED_NUMBER | ESCAPED_STRING
+
+%import common.CNAME
+%import common.SIGNED_NUMBER
+%import common.ESCAPED_STRING
+%import common.WS
+%ignore WS
